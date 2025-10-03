@@ -1,0 +1,55 @@
+2025/10/03 12:53:04 [emerg] 1#1: host not found in upstream "api-gateway" in /etc/nginx/conf.d/default.conf:15
+
+nginx: [emerg] host not found in upstream "api-gateway" in /etc/nginx/conf.d/default.conf:15
+
+docker tag diary-api_gateway:latest diary/api-gateway:latest
+
+docker tag diary-frontend:latest diary/frontend:latest
+
+docker tag diary-login_service:latest diary/login-service:latest
+
+docker tag diary-search_service:latest diary/search-service:latest
+
+docker tag diary-entry_service:latest diary/entry-service:latest
+
+kubectl apply -f mysql.yml
+kubectl apply -f entry-service.yml
+kubectl apply -f login-service.yml
+kubectl apply -f search-service.yml
+kubectl apply -f frontend.yml
+kubectl apply -f api-gateway.yml
+
+
+kind load docker-image berly01/diary-api-gateway:latest --name miapp
+kind load docker-image berly01/diary-login-service:latest --name miapp
+kind load docker-image berly01/diary-frontend:latest --name miapp
+kind load docker-image berly01/diary-entry-service:latest --name miapp
+kind load docker-image berly01/diary-search-service:latest --name miapp
+
+
+docker tag diary/api-gateway:latest berly01/diary-api-gateway:latest
+docker push berly01/diary-api-gateway:latest
+
+
+
+docker tag diary/login-service berly01/diary-login-service:latest
+docker push berly01/diary-login-service:latest
+
+
+
+docker tag diary/search-service:latest berly01/diary-search-service:latest
+docker push berly01/diary-search-service:latest
+
+
+
+docker tag diary/entry-service:latest berly01/diary-entry-service:latest
+docker push berly01/diary-entry-service:latest
+
+
+
+docker tag diary/frontend:latest berly01/diary-frontend:latest
+docker push berly01/diary-frontend:latest
+
+
+kubectl scale deployment entry-service --replicas=5
+kubectl describe service entry-service

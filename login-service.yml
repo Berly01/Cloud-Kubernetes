@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: login-service
+spec:
+  selector:
+    matchLabels:
+      app: login-service
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: login-service
+    spec:
+      containers:
+      - name: login-service
+        image: berly01/diary-login-service:latest
+        ports:
+        - containerPort: 5001
+        env:
+        - name: DB_HOST
+          value: mysql
+        - name: DB_USER
+          value: root
+        - name: DB_PASSWORD
+          value: rootpassword
+        - name: DB_NAME
+          value: diary_db
+        - name: SECRET_KEY
+          value: tu_clave_secreta_super_segura_123
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: login-service
+spec:
+  type: ClusterIP
+  selector:
+    app: login-service
+  ports:
+    - port: 5001
+      targetPort: 5001
